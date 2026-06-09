@@ -304,8 +304,8 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    // Google Apps Script 웹앱 URL
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5m7gaeAM0DOdpBRf5W5fh5heqayW7qqBF4i9Hw0oh0xsdrsQar6WM8scXGFsJs45MCw/exechttps://script.google.com/macros/s/AKfycby5m7gaeAM0DOdpBRf5W5fh5heqayW7qqBF4i9Hw0oh0xsdrsQar6WM8scXGFsJs45MCw/exec';
+    // Google Apps Script 웹앱 URL (중복 주소 수정 완료)
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5m7gaeAM0DOdpBRf5W5fh5heqayW7qqBF4i9Hw0oh0xsdrsQar6WM8scXGFsJs45MCw/exec';
 
     const authSection = document.getElementById('authSection');
     const mainSection = document.getElementById('mainSection');
@@ -342,7 +342,7 @@
       return { email, password };
     }
 
-    // --- Authentication [필수 3] ---
+    // --- Authentication ---
     signupBtn.addEventListener('click', async () => {
       const account = getEmailAndPassword();
       if (!account) return;
@@ -386,14 +386,14 @@
       userEmail.textContent = user.email;
     }
 
+    // 💡 [수정 완료]: 자바스크립트 문법 오류(.remove -> .classList.remove) 수정 완료
     function showAuthPage() {
-      authSection.remove('hidden');
       authSection.classList.remove('hidden');
       mainSection.classList.add('hidden');
       dataList.innerHTML = '';
     }
 
-    // --- Realtime Database 연동 [필수 2] ---
+    // --- Realtime Database 연동 ---
     function startRealtimeDataListener(uid) {
       stopRealtimeDataListener();
       setStatus('데이터베이스 파이프라인 연결 중...');
@@ -411,7 +411,7 @@
       if (currentItemsRef) { off(currentItemsRef); currentItemsRef = null; }
     }
 
-    // --- 생성형 인공지능 API 연동 (공학용 세팅) [필수 4] ---
+    // --- 생성형 인공지능 API 연동 (공학용 세팅) ---
     aiBtn.addEventListener('click', async () => {
       const term = titleInput.value.trim();
       if (!term) {
@@ -424,7 +424,6 @@
         aiBtn.textContent = '⚡ 해석 중...';
         setStatus('AI가 공학 전공 데이터베이스 및 글로벌 최신 논문을 분석 중입니다...');
 
-        // 공학도 맞춤형 프롬프트 주입
         const engineeringPrompt = `공학(Engineering) 관점에서 "${term}"의 간결하고 핵심적인 대학원 전공 수준의 정의와, 이 개념이 실제 국제 학회 논문에 쓰일 때 활용하기 좋은 핵심 학술 영어 표현(Academic English Sentence)을 합쳐서 딱 한 문장(영어 위주)으로만 완성해서 다른 설명 없이 결과만 보내줘.`;
 
         const response = await fetch(APPS_SCRIPT_URL, {
@@ -489,7 +488,7 @@
       } catch (error) { alert('수정 실패'); }
     };
 
-    // --- OpenAI Speech API 활용 TTS 기술 (논문 리딩용) [필수 5] ---
+    // --- OpenAI Speech API 활용 TTS 기술 ---
     window.playTTS = async function(btn, text) {
       try {
         btn.disabled = true;
@@ -498,7 +497,7 @@
 
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
-          body: JSON.stringify({ type: "tts", text: text, voice: "nova", model: "tts-1" }) // 학술적인 톤앤매너인 nova 음성 모델 채택
+          body: JSON.stringify({ type: "tts", text: text, voice: "nova", model: "tts-1" })
         });
 
         const data = await response.json();
