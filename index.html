@@ -227,7 +227,7 @@
 <body>
   <div class="container">
     <h1>AI Engineering Lexicon 🛠️</h1>
-    <div class="subtitle">공학 연구원 및 학생을 위한 전공 용어 및 논문 영어 표현 마스터 솔루션</div>
+    <div class="subtitle">공학 연구원 및 학생을 위한 전공 용어 마스터 솔루션</div>
 
     <section id="authSection">
       <div class="auth-box">
@@ -251,10 +251,10 @@
 
       <div class="form-box">
         <div class="form-row">
-          <input id="titleInput" type="text" placeholder="공학 용어/개념/수식 이름 입력 (예: 고유값 분해, Navier-Stokes)" />
+          <input id="titleInput" type="text" placeholder="공학 용어/개념/수식 이름 입력 (예: 고유값 분해, 유한요소해석)" />
         </div>
         <div class="form-row">
-          <input id="contentInput" type="text" placeholder="공학적 정의 또는 학회 논문용 핵심 영어 표현" style="flex: 2;" />
+          <input id="contentInput" type="text" placeholder="공학적 핵심 정의 (AI가 100% 한국어로만 해석합니다)" style="flex: 2;" />
           <button class="ai-btn" id="aiBtn">🤖 AI 공학 해석</button>
         </div>
         <button class="add-btn" id="addBtn">나만의 공학 노트에 기록 저장</button>
@@ -304,7 +304,7 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    // Google Apps Script 웹앱 URL 
+    // Google Apps Script 웹앱 URL
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsaOXF-wA7RRV0Q6-N-VKs8oT4axIgPnAHGQevkE0x0GTXSMAbdJlRk008n7d4PKqlrw/exec';
 
     const authSection = document.getElementById('authSection');
@@ -410,7 +410,7 @@
       if (currentItemsRef) { off(currentItemsRef); currentItemsRef = null; }
     }
 
-    // --- 생성형 인공지능 API 연동 (공학용 한글/영어 분리 최적화) ---
+    // --- 생성형 인공지능 API 연동 (100% 한국어 전용 세팅) ---
     aiBtn.addEventListener('click', async () => {
       const term = titleInput.value.trim();
       if (!term) {
@@ -421,21 +421,19 @@
       try {
         aiBtn.disabled = true;
         aiBtn.textContent = '⚡ 해석 중...';
-        setStatus('AI가 공학 전공 데이터베이스 및 글로벌 최신 논문을 분석 중입니다...');
+        setStatus('AI가 공학 전공 데이터베이스를 기반으로 용어를 정의하고 있습니다...');
 
-        // 💡 프롬프트를 완전히 구조화하여 한글과 영어 출력물이 뒤섞이지 않게 고정했습니다.
-        const engineeringPrompt = `공학(Engineering) 관점에서 다음 용어에 대해 아래의 [출력 조건]을 완벽히 지켜서 답변해줘.
+        // 💡 영어 예문 생성을 전면 삭제하고 오직 한국어 정의만 한 줄로 생성하도록 규정했습니다.
+        const engineeringPrompt = `공학(Engineering) 관점에서 다음 용어의 핵심 정의를 작성해줘.
 
 용어: "${term}"
 
-[출력 조건]
-1. 첫 번째 줄은 반드시 해당 용어의 100% 한국어 핵심 기술 정의를 적어줘. (영어를 섞지 말 것)
-2. 두 번째 줄은 이 개념이 실제 국제 학술 논문(IEEE, Nature 등)에 쓰일 만한 고급 학술 영어 예문(Academic English Sentence)을 단 한 문장으로 적어줘.
-3. 마크다운 서식(#, *, - 등)이나 인사말은 일절 생략하고 오직 두 줄의 텍스트만 출력해줘.
+[지시 사항]
+1. 반드시 100% 한국어로만 작성해라. 영어 문장이나 영어 예문을 절대 뒤에 추가하지 마라.
+2. 마크다운 기호(#, *, -, [ ] 등)나 인사말은 완전히 제외하고 딱 한 문장의 평서문 텍스트 형태로만 결과를 보내라.
 
-[출력 양식 예시]
-고유값 분해는 행렬을 고유값과 고유벡터의 차원으로 분해하여 다차원 데이터를 분석하는 선형대수학 기법이다.
-Eigenvalue decomposition serves as a fundamental mathematical framework to simplify complex matrix operations in high-dimensional data analysis.`;
+[출력 예시]
+유한요소해석은 복잡한 구조물이나 물리적 시스템을 수치적으로 해석하기 위해 연속체를 유한한 수의 요소로 분할하여 해를 구하는 기법이다.`;
 
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -445,9 +443,8 @@ Eigenvalue decomposition serves as a fundamental mathematical framework to simpl
         const data = await response.json();
         if (data.error) throw new Error(data.error);
 
-        // 결과창 내에 줄바꿈이 깔끔하게 표시되도록 처리
         contentInput.value = data.answer.replace(/"/g, "").trim(); 
-        setStatus('AI 공학 해석 로드 완료! 노트를 영구 저장하려면 추가 버튼을 누르세요.');
+        setStatus('AI 공학 해석 완료! 노트를 영구 저장하려면 추가 버튼을 누르세요.');
       } catch (error) {
         alert('AI 분석 실패: ' + error.message);
       } finally {
@@ -505,7 +502,7 @@ Eigenvalue decomposition serves as a fundamental mathematical framework to simpl
       try {
         btn.disabled = true;
         btn.textContent = '🧬 로딩';
-        setStatus('글로벌 학회 발표용 오디오 스트림 합성 중...');
+        setStatus('오디오 스트림 합성 중...');
 
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -517,12 +514,12 @@ Eigenvalue decomposition serves as a fundamental mathematical framework to simpl
 
         audioPlayer.src = "data:audio/mp3;base64," + data.audio;
         audioPlayer.play();
-        setStatus('학술 오디오 스트리밍 출력 중.. 발음을 청취하고 따라 하세요.');
+        setStatus('오디오 스트리밍 출력 중...');
       } catch (error) {
         alert('TTS 오디오 출력 실패: ' + error.message);
       } finally {
         btn.disabled = false;
-        btn.textContent = '🔊 논문 리딩';
+        btn.textContent = '🔊 리딩';
       }
     };
 
@@ -548,7 +545,7 @@ Eigenvalue decomposition serves as a fundamental mathematical framework to simpl
             <div class="item-date">기록 및 검증 시점: ${item.createdAt || '-'} ${item.updatedAt ? ` (수정 승인됨)` : ''}</div>
           </div>
           <div class="item-actions">
-            <button class="tts-btn" onclick="playTTS(this, '${escapedContent}')">🔊 논문 리딩</button>
+            <button class="tts-btn" onclick="playTTS(this, '${escapedContent}')">🔊 리딩</button>
             <button class="edit-btn" onclick="showEditForm('${id}', '${escapedTitle}', '${escapedContent}')">수정</button>
             <button class="delete-btn" onclick="deleteData('${id}')">삭제</button>
           </div>
