@@ -288,7 +288,7 @@
       off
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
-    // Firebase 구성 설정 (주어진 크레덴셜 유지)
+    // Firebase 구성 설정 
     const firebaseConfig = {
       apiKey: "AIzaSyDbrZCoHQMV_YLL6K40m8ckxr4CGjpWNfw",
       authDomain: "test-92919.firebaseapp.com",
@@ -304,8 +304,8 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    // 💡 [수정 완료]: 주소가 중복으로 들어갔던 오류를 깔끔하게 해결했습니다.
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzELYKYu7RHNbvsaAg63XxOWfO44wKo_tOCk5oXdZu1xeaGx7sgBN_TpkGgEJHa9AF9DQ/exec';
+    // Google Apps Script 웹앱 URL 
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0tRYMVwFWOzcVF-W2FIVmEHY_K6FDibEbT4YjewzJcwBPTvs6BA3f2KR9pUBiFA2nbA/exec';
 
     const authSection = document.getElementById('authSection');
     const mainSection = document.getElementById('mainSection');
@@ -410,7 +410,7 @@
       if (currentItemsRef) { off(currentItemsRef); currentItemsRef = null; }
     }
 
-    // --- 생성형 인공지능 API 연동 (공학용 세팅) ---
+    // --- 생성형 인공지능 API 연동 (공학용 한글/영어 분리 최적화) ---
     aiBtn.addEventListener('click', async () => {
       const term = titleInput.value.trim();
       if (!term) {
@@ -423,7 +423,19 @@
         aiBtn.textContent = '⚡ 해석 중...';
         setStatus('AI가 공학 전공 데이터베이스 및 글로벌 최신 논문을 분석 중입니다...');
 
-        const engineeringPrompt = `공학(Engineering) 관점에서 "${term}"의 간결하고 핵심적인 대학원 전공 수준의 정의와, 이 개념이 실제 국제 학회 논문에 쓰일 때 활용하기 좋은 핵심 학술 영어 표현(Academic English Sentence)을 합쳐서 딱 한 문장(영어 위주)으로만 완성해서 다른 설명 없이 결과만 보내줘.`;
+        // 💡 프롬프트를 완전히 구조화하여 한글과 영어 출력물이 뒤섞이지 않게 고정했습니다.
+        const engineeringPrompt = `공학(Engineering) 관점에서 다음 용어에 대해 아래의 [출력 조건]을 완벽히 지켜서 답변해줘.
+
+용어: "${term}"
+
+[출력 조건]
+1. 첫 번째 줄은 반드시 해당 용어의 100% 한국어 핵심 기술 정의를 적어줘. (영어를 섞지 말 것)
+2. 두 번째 줄은 이 개념이 실제 국제 학술 논문(IEEE, Nature 등)에 쓰일 만한 고급 학술 영어 예문(Academic English Sentence)을 단 한 문장으로 적어줘.
+3. 마크다운 서식(#, *, - 등)이나 인사말은 일절 생략하고 오직 두 줄의 텍스트만 출력해줘.
+
+[출력 양식 예시]
+고유값 분해는 행렬을 고유값과 고유벡터의 차원으로 분해하여 다차원 데이터를 분석하는 선형대수학 기법이다.
+Eigenvalue decomposition serves as a fundamental mathematical framework to simplify complex matrix operations in high-dimensional data analysis.`;
 
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -433,6 +445,7 @@
         const data = await response.json();
         if (data.error) throw new Error(data.error);
 
+        // 결과창 내에 줄바꿈이 깔끔하게 표시되도록 처리
         contentInput.value = data.answer.replace(/"/g, "").trim(); 
         setStatus('AI 공학 해석 로드 완료! 노트를 영구 저장하려면 추가 버튼을 누르세요.');
       } catch (error) {
