@@ -304,8 +304,8 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    // Google Apps Script 웹앱 URL (중복 주소 수정 완료)
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0tRYMVwFWOzcVF-W2FIVmEHY_K6FDibEbT4YjewzJcwBPTvs6BA3f2KR9pUBiFA2nbA/exechttps://script.google.com/macros/s/AKfycbw0tRYMVwFWOzcVF-W2FIVmEHY_K6FDibEbT4YjewzJcwBPTvs6BA3f2KR9pUBiFA2nbA/exec';
+    // 💡 [수정 완료]: 주소가 중복으로 들어갔던 오류를 깔끔하게 해결했습니다.
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0tRYMVwFWOzcVF-W2FIVmEHY_K6FDibEbT4YjewzJcwBPTvs6BA3f2KR9pUBiFA2nbA/exec';
 
     const authSection = document.getElementById('authSection');
     const mainSection = document.getElementById('mainSection');
@@ -386,7 +386,6 @@
       userEmail.textContent = user.email;
     }
 
-    // 💡 [수정 완료]: 자바스크립트 문법 오류(.remove -> .classList.remove) 수정 완료
     function showAuthPage() {
       authSection.classList.remove('hidden');
       mainSection.classList.add('hidden');
